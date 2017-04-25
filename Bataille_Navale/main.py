@@ -135,10 +135,13 @@ def main_robot():
 		print("you loose !")
 
 def main_client(x):
-    choix = (input ("Voulez vous jouer en réseau <N>on <O>ui ?"))
+    choix = (input ("Voulez vous jouer en réseau <N>on <O>ui ? <R>: Ou simplement Observer une partie"))
     if (choix == 'O'):
     	main_robot()
     	return
+    if (choix == 'R'):
+        observator()
+        return
     #Création de la socket TCP/IP
     client = socket.socket(family = socket.AF_INET6, type = socket.SOCK_STREAM, proto = 0, fileno = None)
 
@@ -193,6 +196,48 @@ def main_client(x):
     else:
         print("you loose !")
 
+def observator():
+    #Création de la socket TCP/IP
+    client = socket.socket(family = socket.AF_INET6, type = socket.SOCK_STREAM, proto = 0, fileno = None)
+
+    #On connecte la nouvelle socket client au port où le server "écoute"
+    server_address = (x,7777)
+    print("Connection au server distant sur le port 7777")
+    client.connect(server_address)
+    print("Vous êtes connecté au serveur de jeu")
+    print("Attente de joueur ...")
+
+    x = 0
+    choix = (input ("Voulez vous regarder le joueur 1 ou 0?"))
+
+    if (choix == 1):
+        x = 1
+        
+    boats1 = receiveBoat(client)
+    print("Joueurs trouvés")
+    boats2 = receiveBoat(client)
+    game = Game(boats1, boats2)
+
+    currentPlayer = 0
+            
+            
+    while gameOver(game) == -1:        
+        if (currentPlayer == J0):
+            #Si c'est le tour du joueur 0 on attend les coordonées qu il a joue et on les envoie au joueur 1
+            x = clients_connectes[0].recv(1)
+            y = clients_connectes[0].recv(1)
+            addShot(game, int(x), int(y), currentPlayer)
+        else:
+            #Si c'est le tour du joueur 1 on attend les coordonées qu il a joue et on les envoie au joueur 0
+            x = clients_connectes[1].recv(1)
+            y = clients_connectes[1].recv(1)
+            addShot(game, int(x), int(y), currentPlayer)
+        currentPlayer = (currentPlayer+1)%2
+        displayGame(game,x)
+    if gameOver(game) == J0:
+        print("J0 Win")
+    else:
+        print("J1 Win !")    
 
 def main():
 
@@ -226,7 +271,7 @@ def main():
             clients_connectes.append(connexion_avec_client)
 
         #Les premiers clients connectés sont les joueurs on leur renvoit les infos sur la table de jeux et leur numero de joueurs
-        if len(clients_connectes) == 2:
+        if len(clients_connectes) >= 2:
             clients_connectes[0].sendall(str(0).encode('utf-8'))
             clients_connectes[1].sendall(str(1).encode('utf-8'))
             boats1 = randomConfiguration(clients_connectes)
