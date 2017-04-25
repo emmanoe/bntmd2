@@ -1,0 +1,71 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[french]{babel}
+\title{Rapport de projet r\'eseau}
+\author{DELAR Emmanoe, RAKOTOARIJAONA Camille}
+\begin{document}
+\maketitle
+\begin{figure}[!b]
+		\centering
+		\includegraphics[height=4cm]{logo.jpg}
+	\end{figure}
+\newpage
+\tableofcontents
+
+\newpage
+\section{Introduction}
+Lors de ce projet, r\'ealis\'e en bin\^omes, nous avions pour objectif de d\'evelopper un jeu de bataille navale en r\'eseau. Pour cela, nous avons utilis\'e le langage de programmation objet Python.
+On est parti du code source fourni par notre enseignant. Ce code nous permettait de jouer contre la machine uniquement. D\`es lors, nous avons d\^u l'am\'eliorer afin de pouvoir jouer \`a 1 contre 1 sur le r\'eseau.
+
+\subsection{Pr\'esentation du jeu}
+	 La bataille navale est un jeu de soci\'et\'e dans lequel deux joueurs doivent placer des « navires » sur une grille tenue secrète et tenter de « toucher » les navires adverses. Le gagnant est celui qui parvient \`a torpiller compl\`etement les navires de l'adversaire avant que tous les siens ne le soient.
+
+
+\section{Fonctionnement du programme}
+	 \subsection{Jouer contre la machine}
+	 Lorsqu'on lance le programme avec le nom du serveur en argument, si on choisi de ne pas jouer en r\'eseau alors le jeu commence directement. On choisi la colonne et la ligne de la grille de l'ordinateur \`a viser. Quand c'est au tour de l'ordinateur, une fonction fait de m\^eme, choisie des coordonn\'ees al\'eatoirement puis joue son coup. Et ainsi de suite jusqu'\`a la fin de la partie. 
+
+	 \subsection{Jouer en r\'eseau local}
+	 Si on choisi de jouer en r\'eseau, comme demand\'e dans le sujet, il faut d’un c\^ot\'e, d\'emarrer le serveur en lan\c cant le programme \guillemotleft main.py\guillemotright \ sans arguments, et du c\^ot\'e client, il faut lancer le programme avec l’adresse ip du serveur en argument.
+	 \newline Lorsque ceux-ci sont lanc\'es, le client aura la possibilit\'e de choisir d\textquoteright abord si il veut se connecter au serveur, ou si il veut jouer seul face au robot comme d\'ecrit au dessus. Si il d\'ecide de jouer en r\'eseau, le programme attendra qu\textquoteright une autre personne se connecte au serveur pour qu'ils puissent jouer ensemble.
+	 \newline Ensuite, chacun jouera \`a tour de r\^ole jusqu\textquoteright a ce que la partie soit termin\'ee, lorsque la partie est termin\'ee chaque joueur verra le score, et le serveur se d\'econnectera et le jeu de chaque joueur aussi. 
+	 \newline Il est \`a noter que les joueurs peuvent donc jouer tout seul peu importe le moment sans affecter le serveur lorsqu\textquoteright ils jouent en local.
+
+\section{Structure}
+	Contrairement \`a la partie contre l'ordinateur, en mode r\'eseau, les coordonn\'ees choisies par le joueur client doivent \^etre envoy\'es au serveur pour qu\textquoteright il puisse les retransmettre \`a l'adversaire. Nous avons alors cr\'e\'e un protocole de communication serveur/client TCP sur le port 7777. Ce port nous permettra de recevoir ou d'\'emettre des informations.
+
+	\subsection{Serveur}
+	La programmation du serveur \`a \'et\'e un peu plus complexe car il a pour t\^ache de faire le lien entre les joueurs. 
+	\newline Au lancement du programme, nous nous retrouvons dans la fonction principale \guillemotleft main \guillemotright\ en attente de demande de connexion, tout cela par la méthode
+	\guillemotleft.select\guillemotright \ vu en cours. 
+	Lorsque 2 joueurs se connectent, le serveur leur envoie \`a l\textquoteright aide de la m\'ethode \guillemotleft socket.send \guillemotright , leur num\'ero, 0 ou 1 selon leur ordre de connexion. Ce num\'ero d\'efini celui d'entre eux qui jouera le premier.
+	\newline La deuxième \'etape, nous a demand\'e beaucoup plus de r\'eflexion car nous avons choisi d'envoyer le jeu cr\'e\'e par le serveur, aux clients connect\'es.
+	\newline En effet, cr\'eer un jeu al\'eatoire depuis le serveur puis l\textquoteright envoyer aux clients nous offre beaucoup de possibililit\'ees. Par exemple impl\'ementer l\textquoteright extension qui nous permet d'avoir des spectateurs devient plus simple car nous pouvons donc leur envoyer ce m\^eme jeu.
+	\newline La fonction qui a \'et\'e modifi\'ee est la fonction \guillemotleft randomConfiguration\guillemotright \ qui cr\'ee la table de bateaux al\'eatoirement.
+	Tout d\textquoteright abord dans la fonction tout se passe normalement comme dans la fonction pr\'ec\'edente cependant, \`a chaque fois que l\textquoteright on a stock\'e une coordonn\'ee et une position de bateau, on les mets dans un tableau, puis on envoie le tout aux deux joueurs avec une boucle parcourant le tableau.
+	\newline Cette partie nous a pos\'ee plusieurs probl\`emes, nous avons par exemple eu un probl\`eme au niveau de la taille des bateaux car les valeurs devaient \^etre envoy\'es en  bytes et avaient des tailles variables, de 1 \`a 2 bytes car on avait des valeurs de 1 \`a 10 et 10 est représent\'e sur 2 bytes, on a donc d\'ecid\'e de retire 1 à chaque valeur pour avoir un interaval de 0 à 9 et ainsi avoir une taille au maximum de 1 byte et chaque valeurs, reçue de l’autre c\^ot\'e par les joueurs serait incr\'ement\'ee de un, tout cela fait pour l’envoie des navires. 
+	\newline Le deuxième problème était aussi un peu complexe, mais après débogage, on a pu voir que l’on envoyait avant directement chaque valeur aléatoire sans avoir au préalablement vérifié si on avait une configuration valide à travers la fonction « isValidConfiguration ».
+	On a alors compris qu’il fallait prendre les dernières valeurs de configuration valide et envoyer le tout à chaque joueurs après.
+	\newline Et enfin comme la fonction basique, celle-ci retourne un bateau. On répète alors ceci 2 fois et pour avoir la table de jeu.
+	Ensuite, c’est le début de la partie, la boucle qui fait jouer le serveur est la même que celle qui fait jouer le robot ou chaque joueur, cependant, celui-ci se place d’abord dans la partie du premier joueur de la boucle, et attendra que le joueur envoie son coup, il mettra le coup sur sa table de jeu et  l’enverra à l’autre joueur, tout cela avec la méthode recv et send. Et passera ensuite à la partie du joueurs 2 de la boucle et fera de même. Et ainsi de suite jusqu’à ce que le jeu soit fini. Ensuite il sort de la boucle et ferme les socket et la fonction et le serveur.
+
+	\subsection{Connexion client}
+	Pour que le client se connecte au serveur, il nous faut le nom de l'h\^ote et le num\'ero de port.
+	\newline Ensuite, on va cr\'eer une socket (client) de type ipv6 qui va nous permettre d'ouvrir une connexion avec une machine locale et d'\'echanger des informations (\`a l'aide de la m\'ethode  \guillemotleft .bind\guillemotright\ ).
+	\newline Pour r\'ecuperer les premieres informations, notamment le num\'ero du joueur, les navires, on intercepte les premiers bytes envoy\'es par la socket serveur (\`a l'aide de la m\'ethode \guillemotleft client.recv\guillemotright\ ).
+	\newline Avec ces informations, on g\'en\'ere une partie \`a partir d'une fonction Game.
+	\newline Une fois la partie cr\'ee puis lanc\'ee, si c'est au joueur actuel de jouer, il entre les coordonn\'ees de la grille adverse \`a viser. Ensuite, on va envoyer ces coordonn\'ees (x,y) sous forme de paquets de bytes au serveur. Le serveur va retransmettre ces paquets de byte \`a l'autre joueur (\`a l'aide de la m\'ethode \guillemotleft client.send\guillemotright\ ).
+	\newline Par contre si c'est au tour de l'autre joueur, la socket client se met en mode r\'eception et attend les coordonn\'ees choisies par l'adversaire (\`a l'aide de la m\'ethode \guillemotleft client.recv\guillemotright\ ). Ces donn\'ees sont \'egalement envoy\'ees par le serveur. 
+	\newline Les donn\'ees re\c cu sont converties en coordonn\'ee de type entier puis passer en arguments de la fonction \guillemotleft addShot \guillemotright\ . Cette fonction tente de viser la flotte ennemie \`a ces coordonn\'ees. Si le tire est juste, l'adversaire voit la case correspondante barr\'ee, sinon la case est entour\'ee pour repr\'esenter un \'echec.    
+	\newline Ce protocole est r\'ep\'et\'e jusqu'\`a la fin de la partie.
+
+	\subsection{Protocole de communication}
+	Une fois la connexion \'etablie, la communication serveur/client est tr\`es simple.
+	Chaque information n\'ecessaire \`a l'initialisation d'une partie est envoy\'e par le serveur bit \`a bit et ainsi r\'ecup\'er\'e du c\^ot\'e client.
+	Il faut noter la n\'ecessit\'e \`a convertir les bytes recus en entier (int).
+
+\section{Extensions}
+
+\section{Conclusion}
+
+\end{document}
