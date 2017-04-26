@@ -52,7 +52,7 @@ On est parti du code source fourni par nos enseignants. Ce code nous permettait 
 	Pour que le client se connecte au serveur, il nous faut le nom de l'h\^ote et le num\'ero de port.
 	\newline Ensuite, on va cr\'eer une socket (client) de type ipv6 qui va nous permettre d'ouvrir une connexion avec une machine locale et d'\'echanger des informations (\`a l'aide de la m\'ethode  \guillemotleft .bind\guillemotright\ ).
 	\newline Pour r\'ecuperer les premieres informations, notamment le num\'ero du joueur et les navires, on intercepte les premiers bytes envoy\'es par la socket serveur (\`a l'aide de la m\'ethode \guillemotleft client.recv\guillemotright\ ).
-	\newline Avec ces informations, le client peut afficher la partie g\'en\'er\'ee par le serveur \`a partir gr\^ace \`a la fonction Game.
+	\newline Avec ces informations, le client peut afficher la partie g\'en\'er\'ee par le serveur gr\^ace \`a la fonction Game.
 	\newline Une fois la partie cr\'ee puis lanc\'ee, si c'est au joueur actuel de jouer, il entre les coordonn\'ees de la grille adverse \`a viser. Ensuite, on va envoyer ces coordonn\'ees (x,y) sous forme de paquets de bytes au serveur. Le serveur va retransmettre ces paquets de byte \`a l'autre joueur (\`a l'aide de la m\'ethode \guillemotleft client.send\guillemotright\ ).
 	\newline Par contre si c'est au tour de l'autre joueur, la socket client se met en mode r\'eception et attend les coordonn\'ees choisies par l'adversaire (\`a l'aide de la m\'ethode \guillemotleft client.recv\guillemotright\ ). Ces donn\'ees sont \'egalement envoy\'ees par le serveur. 
 	\newline Les donn\'ees re\c cu sont converties en coordonn\'ee de type entier puis passer en arguments de la fonction \guillemotleft addShot \guillemotright\ . Cette fonction tente de viser la flotte ennemie \`a ces coordonn\'ees. Si le tire est juste, l'adversaire voit la case correspondante barr\'ee, sinon la case est entour\'ee pour repr\'esenter un \'echec.    
@@ -62,9 +62,18 @@ On est parti du code source fourni par nos enseignants. Ce code nous permettait 
 	Une fois la connexion \'etablie, la communication serveur/client est tr\`es simple.
 	Chaque information n\'ecessaire \`a l'initialisation d'une partie est envoy\'e par le serveur bit \`a bit et ainsi r\'ecup\'er\'e du c\^ot\'e client.
 	Il faut noter la n\'ecessit\'e \`a convertir les bytes recus en entier (int).
-
+\newpage
 \section{Extensions}
+	\subsection{Joueur vs robot}
+	Pour impl\'ementer l\textquoteright extension \guillemotleft jouer vs robot \guillemotright \ , il nous a juste fallu mettre une condition et si elle est respect\'ee, on lance le programme initiale qui simule d\'eja une partie joueur/robot. 
+	
+	\subsection{Observateurs}
+	L'extension \guillemotleft Observateurs \guillemotright \ nous a demand\'ee une fonction en plus. Cette fonction d\'efinie l'observateur comme un joueur en plus et initialise sa nouvelle table de jeu. Ce n'est qu'au moment d'afficher la table de jeu que \c ca change. Notre fonction \guillemotleft observator \guillemotright va demander au serveur d'afficher deux tables \`a la fois \guillemotleft displayGame(game,0) \guillemotright et \guillemotleft displayGame(game,1) \guillemotright respectivement la table du joeur 0 puis celle du joueur 1 . \`A la fin, cette fonction teste \'egalement si le jeu est termin\'e et lequel des joueurs l'a remport\'e puis l'affiche. Et ainsi, nous avons un spectateur qui voit les coups jou\'es par les deux joueurs.
+
 
 \section{Conclusion}
+Sur une p\'eriode d'un semestre, les diff\'erentes notions sur l'organisation g\'en\'erale des protocoles r\'eseaux vues en cours nous ont permis de r\'ealiser ce projet. \`A l'aide de la biblioth\`eque standard \guillemotleft socket \guillemotright \ du langage de programmation objet Python. Cette interface de programmation bas-niveau permet aux applications de communiquer en passant directement par la couche transport du mod\`ele OSI. Nous avons alors cr\'e\'e un serveur de jeu bataille navale en r\'eseau.
+\newline Tout au long du projet, nous sommes tomber sur de nombreux probl\`emes par rapport au mode de communication de ce syst\`eme. Par exemple pour que deux sockets communiquent, il faut \'echanger des paquets de bytes et non pas des entiers. Nous avons aussi vu que ...
+\newline En prenant du recul, nous pouvons dire que le projet nous a apport\'e un bagage suppl\'ementaire. Nous avons consolid\'e nos connaissances g\'en\'erales sur la programmation r\'eseau bas niveau, la couche transport du systeme OSI et avons aussi appris \`a coder \`a un niveau sup\'erieur.
 
 \end{document}

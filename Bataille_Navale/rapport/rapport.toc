@@ -8,5 +8,7 @@
 \contentsline {subsection}{\numberline {3.1}Serveur}{4}
 \contentsline {subsection}{\numberline {3.2}Connexion client}{5}
 \contentsline {subsection}{\numberline {3.3}Protocole de communication}{5}
-\contentsline {section}{\numberline {4}Extensions}{5}
-\contentsline {section}{\numberline {5}Conclusion}{5}
+\contentsline {section}{\numberline {4}Extensions}{6}
+\contentsline {subsection}{\numberline {4.1}Joueur vs robot}{6}
+\contentsline {subsection}{\numberline {4.2}Observateurs}{6}
+\contentsline {section}{\numberline {5}Conclusion}{6}

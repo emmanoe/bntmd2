@@ -198,7 +198,6 @@ def main_client(x):
 
 def observator(client):    
     boats1 = receiveBoat(client)
-    print("Joueurs trouvés")
     boats2 = receiveBoat(client)
     game = Game(boats1, boats2)
     displayGame(game,0)
