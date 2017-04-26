@@ -26,9 +26,8 @@ def randomConfiguration(clients_connectes):
             boats = boats + [Boat(x+1,y+1,LENGTHS_REQUIRED[i],isHorizontal)]
             tab = tab + [ x , y , isHorizontalint]
     for i in range (len(tab)):
-        clients_connectes[0].sendall(str(tab[i]).encode('utf-8'))
-        clients_connectes[1].sendall(str(tab[i]).encode('utf-8'))
-            
+        for j in range(len(clients_connectes)):
+            clients_connectes[j].sendall(str(tab[i]).encode('utf-8'))            
     return boats
 
 def randomConfiguration2():
@@ -135,13 +134,10 @@ def main_robot():
 		print("you loose !")
 
 def main_client(x):
-    choix = (input ("Voulez vous jouer en réseau <N>on <O>ui ? <R>: Ou simplement Observer une partie"))
-    if (choix == 'O'):
+    choix = (input ("Voulez vous jouer en réseau <N>on <O>ui ?"))
+    if (choix == 'N'):
     	main_robot()
     	return
-    if (choix == 'R'):
-        observator()
-        return
     #Création de la socket TCP/IP
     client = socket.socket(family = socket.AF_INET6, type = socket.SOCK_STREAM, proto = 0, fileno = None)
 
@@ -153,6 +149,10 @@ def main_client(x):
     print("Attente de joueur ...")
 
     Player_Number = client.recv(1)
+    if (int(Player_Number) >= 2):
+        print("Dernier connectés vous observerez la partie")
+        observator(client)
+        return
     print("Joueur trouvé")
     boats1 = receiveBoat(client)
     boats2 = receiveBoat(client)
@@ -196,44 +196,24 @@ def main_client(x):
     else:
         print("you loose !")
 
-def observator():
-    #Création de la socket TCP/IP
-    client = socket.socket(family = socket.AF_INET6, type = socket.SOCK_STREAM, proto = 0, fileno = None)
-
-    #On connecte la nouvelle socket client au port où le server "écoute"
-    server_address = (x,7777)
-    print("Connection au server distant sur le port 7777")
-    client.connect(server_address)
-    print("Vous êtes connecté au serveur de jeu")
-    print("Attente de joueur ...")
-
-    x = 0
-    choix = (input ("Voulez vous regarder le joueur 1 ou 0?"))
-
-    if (choix == 1):
-        x = 1
-        
+def observator(client):    
     boats1 = receiveBoat(client)
     print("Joueurs trouvés")
     boats2 = receiveBoat(client)
     game = Game(boats1, boats2)
+    displayGame(game,0)
+    displayGame(game,1)
 
     currentPlayer = 0
-            
-            
-    while gameOver(game) == -1:        
-        if (currentPlayer == J0):
-            #Si c'est le tour du joueur 0 on attend les coordonées qu il a joue et on les envoie au joueur 1
-            x = clients_connectes[0].recv(1)
-            y = clients_connectes[0].recv(1)
-            addShot(game, int(x), int(y), currentPlayer)
-        else:
-            #Si c'est le tour du joueur 1 on attend les coordonées qu il a joue et on les envoie au joueur 0
-            x = clients_connectes[1].recv(1)
-            y = clients_connectes[1].recv(1)
-            addShot(game, int(x), int(y), currentPlayer)
+                     
+    while gameOver(game) == -1:
+        x = client.recv(1)
+        y = client.recv(1)
+        addShot(game, int(x), int(y), currentPlayer)
         currentPlayer = (currentPlayer+1)%2
-        displayGame(game,x)
+        displayGame(game,0)
+        displayGame(game,1)
+        
     if gameOver(game) == J0:
         print("J0 Win")
     else:
@@ -262,18 +242,26 @@ def main():
     while True:
         # Attente d'une connexion
         #On récupère les sockets disponibles en lecture
+        
+        
         connexions_demandees, wlist, xlist = select.select([server],[], [])
+        time.sleep(10)
         print("1 joueur s'est connecté")
-    
         for connexion in connexions_demandees:
             connexion_avec_client, infos_connexion = connexion.accept()
             # On ajoute la socket connecté à la liste des clients
             clients_connectes.append(connexion_avec_client)
+        print("Chargement 5 à 10 secondes maximum")
+        
+        
 
         #Les premiers clients connectés sont les joueurs on leur renvoit les infos sur la table de jeux et leur numero de joueurs
-        if len(clients_connectes) >= 2:
-            clients_connectes[0].sendall(str(0).encode('utf-8'))
-            clients_connectes[1].sendall(str(1).encode('utf-8'))
+        if (len(clients_connectes) == 3):
+            print("Chargement terminé")
+            player_numb = 0
+            for i in range (len(clients_connectes)):
+                clients_connectes[i].sendall(str(player_numb).encode('utf-8'))
+                player_numb += 1
             boats1 = randomConfiguration(clients_connectes)
             boats2 = randomConfiguration(clients_connectes)
             game = Game(boats1, boats2)
@@ -290,8 +278,9 @@ def main():
                     x = clients_connectes[0].recv(1)
                     y = clients_connectes[0].recv(1)
                     addShot(game, int(x), int(y), currentPlayer)
-                    clients_connectes[1].send(x)
-                    clients_connectes[1].send(y)
+                    for i in range (1,len(clients_connectes)):
+                        clients_connectes[i].send(x)
+                        clients_connectes[i].send(y)
                     currentPlayer = (currentPlayer+1)%2
                 else:
                     #Si c'est le tour du joueur 1 on attend les coordonées qu il a joue et on les envoie au joueur 0
@@ -300,12 +289,15 @@ def main():
                     addShot(game, int(x), int(y), currentPlayer)
                     clients_connectes[0].send(x)
                     clients_connectes[0].send(y)
+                    if((len(clients_connectes)) > 2):
+                        for i in range(2,len(clients_connectes)):
+                            clients_connectes[i].send(x)
+                            clients_connectes[i].send(y)
                     currentPlayer = (currentPlayer+1)%2
-            
-            #Fin du jeu et fermeture des connexions
-            for client in clients_connectes:
-                client.close()
-            server.close()
+    #Fin du jeu et fermeture des connexions
+    for client in clients_connectes:
+        client.close()
+    server.close()
 
             
     
