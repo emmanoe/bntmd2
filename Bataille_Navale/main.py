@@ -208,6 +208,7 @@ def observator(client):
       
 
     while gameOver(game) == -1:
+        print ("Joueur", (currentPlayer+1)%2)
         print ("Le joueur", currentPlayer, "joue son coup.")
         x = client.recv(1)
         y = client.recv(1)
@@ -252,13 +253,24 @@ def main():
             connexion_avec_client, infos_connexion = connexion.accept()
             # On ajoute la socket connecté à la liste des clients
             clients_connectes.append(connexion_avec_client)
-        print("Chargement 5 à 10 secondes maximum")
-        
-        
 
         #Les premiers clients connectés sont les joueurs on leur renvoit les infos sur la table de jeux et leur numero de joueurs
-        if (len(clients_connectes) == 3):
+        if (len(clients_connectes) == 2):
+            print("2 joueur(s) connecté(s)" )
+
+            print("Chargement ...")    
+            print("Attente d'éventuel spectateurs")
+            timeout = 8
+            connexions_demandees, wlist, xlist = select.select([server],[], [],timeout)
+            for connexion in connexions_demandees:
+                connexion_avec_client, infos_connexion = connexion.accept()
+                # On ajoute la socket connecté à la liste des clients
+                clients_connectes.append(connexion_avec_client)
+
+            print("time out:")    
+            print("%d spectateur(s) connecté(s)" % (len(clients_connectes) - 2))
             print("Chargement terminé")
+
             player_numb = 0
             for i in range (len(clients_connectes)):
                 clients_connectes[i].sendall(str(player_numb).encode('utf-8'))
@@ -266,8 +278,7 @@ def main():
             boats1 = randomConfiguration(clients_connectes)
             boats2 = randomConfiguration(clients_connectes)
             game = Game(boats1, boats2)
-            print("%s joueur(s) connecté(s)" % len(clients_connectes))
-            
+                        
             
             #Pour commencer on defini le joueur du serveur à 0 
             currentPlayer = 0
