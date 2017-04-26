@@ -209,10 +209,10 @@ def observator(client):
     while gameOver(game) == -1:
         x = client.recv(1)
         y = client.recv(1)
-        addShot(game, int(x), int(y), currentPlayer)
+        addShot(game, int(x)+1, int(y)+1, currentPlayer)
+        displayGame(game,currentPlayer)
         currentPlayer = (currentPlayer+1)%2
-        displayGame(game,0)
-        displayGame(game,1)
+        
         
     if gameOver(game) == J0:
         print("J0 Win")
