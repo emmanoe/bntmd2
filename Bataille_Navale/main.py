@@ -205,8 +205,10 @@ def observator(client):
     displayGame(game,1)
 
     currentPlayer = 0
-                     
+      
+
     while gameOver(game) == -1:
+        print ("Le joueur", currentPlayer, "joue son coup.")
         x = client.recv(1)
         y = client.recv(1)
         addShot(game, int(x)+1, int(y)+1, currentPlayer)
@@ -245,7 +247,6 @@ def main():
         
         
         connexions_demandees, wlist, xlist = select.select([server],[], [])
-        time.sleep(10)
         print("1 joueur s'est connecté")
         for connexion in connexions_demandees:
             connexion_avec_client, infos_connexion = connexion.accept()
