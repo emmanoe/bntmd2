@@ -13,6 +13,7 @@ import sys
 
 
 """ generate a random valid configuration """
+#Fonction gérant l'envoie des bateaux aux clients 
 def randomConfiguration(clients_connectes):
     boats = [];
     while not isValidConfiguration(boats):
@@ -91,6 +92,8 @@ def randomNewShot(shots):
         (x,y) = (random.randint(1,10), random.randint(1,10))
     return (x,y)
 
+
+#Fonction de reception d'une table de jeu 
 def receiveBoat(client):
     boats = []
     for i in range(5):
@@ -195,7 +198,8 @@ def main_client(x):
         print("You win !")
     else:
         print("you loose !")
-
+        
+#Fonction de gestion du jeu du spectateur
 def observator(client):    
     boats1 = receiveBoat(client)
     boats2 = receiveBoat(client)
