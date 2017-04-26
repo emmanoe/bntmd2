@@ -278,7 +278,7 @@ def main():
                     #Si c'est le tour du joueur 0 on attend les coordonées qu il a joue et on les envoie au joueur 1
                     x = clients_connectes[0].recv(1)
                     y = clients_connectes[0].recv(1)
-                    addShot(game, int(x), int(y), currentPlayer)
+                    addShot(game, int(x)+1, int(y)+1, currentPlayer)
                     for i in range (1,len(clients_connectes)):
                         clients_connectes[i].send(x)
                         clients_connectes[i].send(y)
@@ -287,7 +287,7 @@ def main():
                     #Si c'est le tour du joueur 1 on attend les coordonées qu il a joue et on les envoie au joueur 0
                     x = clients_connectes[1].recv(1)
                     y = clients_connectes[1].recv(1)
-                    addShot(game, int(x), int(y), currentPlayer)
+                    addShot(game, int(x)+1, int(y)+1, currentPlayer)
                     clients_connectes[0].send(x)
                     clients_connectes[0].send(y)
                     if((len(clients_connectes)) > 2):
