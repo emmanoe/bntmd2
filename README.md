@@ -1,6 +1,6 @@
-# BATAILLE NAVALE 
+# BATAILLE NAVALE
 
-Dans ce dossier vous trouverez un fichier main.py qui permet de lancer un serveur de jeu et également connecter plusieurs clients.
+Dans ce dossier vous trouverez un fichier main.py qui permet de lancer un serveur de jeu en local et également connecter plusieurs clients en réseau.
 
 
 ### Lancement
