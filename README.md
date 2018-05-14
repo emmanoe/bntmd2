@@ -5,7 +5,7 @@ Dans ce dossier vous trouverez un fichier main.py qui permet de lancer un serveu
 
 ### Lancement
 
-1 - Lancer un terminal depuis le dossier Bataille_Navale puis en ligne de commande, demarrer le serveur:
+1 - Lancer un terminal depuis le dossier bntmd2 puis en ligne de commande, demarrer le serveur:
 	$ ./main.py
 
 2 - Dans deux autres terminaux on va connecter les clients au serveur créé. Pour cela, faites la même chose qu'à l'étape 1 sauf que cette fois ci on va ajouter l'adresse du serveur en paramêtre de notre excutable:
