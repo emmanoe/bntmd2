@@ -1,6 +1,6 @@
-==== BATAILLE NAVALE ====
+# BATAILLE NAVALE 
 
-Dans ce dossier vous trouverez un fichier main.py qui permet de lancer un serveur de jeu et également connecter plusieurs clients. 
+Dans ce dossier vous trouverez un fichier main.py qui permet de lancer un serveur de jeu et également connecter plusieurs clients.
 
 
 ### Lancement
@@ -11,7 +11,7 @@ Dans ce dossier vous trouverez un fichier main.py qui permet de lancer un serveu
 2 - Dans deux autres terminaux on va connecter les clients au serveur créé. Pour cela, faites la même chose qu'à l'étape 1 sauf que cette fois ci on va ajouter l'adresse du serveur en paramêtre de notre excutable:
 	$ ./main.py :: (pour lancer en local)
 
-3 - Il vous sera demandé si vous voulez jouer en réseau, répondre O (oui) ou N (non) à l'aide des touches de votre clavier. 
+3 - Il vous sera demandé si vous voulez jouer en réseau, répondre O (oui) ou N (non) à l'aide des touches de votre clavier.
 
 
 ### Autre
