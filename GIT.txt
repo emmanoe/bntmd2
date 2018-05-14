@@ -1,0 +1,7 @@
+Lien du projet Bataille_Navale : 
+
+https://services.emi.u-bordeaux.fr/projet/git/bntmd2
+
+La deuxieme adresse contient les logs et les premiers commits de notre projet car nous l'avions à la base commencé sur github.com avant de le déplacer sur savane:
+
+https://github.com/EzekielaRakotoarijaona/Bataille_Navale
